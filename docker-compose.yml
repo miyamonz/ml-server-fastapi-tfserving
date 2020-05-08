@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  fastapi:
+    build: './fastapi'
+    ports:
+      - "80:80"
+    volumes:
+      - "./fastapi/app/:/app"
+    environment:
+      - GUNICORN_CMD_ARGS="--reload"
+  servingtf:
+    build: './servingtf'
+    ports:
+      - "8501:8501"
