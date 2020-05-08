@@ -6,7 +6,6 @@ import sentencepiece as sp
 vocab_file = "/model/wiki-ja.vocab"
 model_file = "/model/wiki-ja.model"
 tokenizer = sp.SentencePieceProcessor()
-print('load')
 tokenizer.Load(model_file)
 
 def create_instance(example):

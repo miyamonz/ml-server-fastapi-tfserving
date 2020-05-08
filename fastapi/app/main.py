@@ -1,11 +1,6 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 app = FastAPI()
-
-import sentencepiece as sp
-vocab_file = "/model/wiki-ja.vocab"
-model_file = "/model/wiki-ja.model"
-tokenizer = sp.SentencePieceProcessor()
-tokenizer.Load(model_file)
 
 from . import req
 
@@ -13,11 +8,15 @@ from . import req
 def read_root():
     return {"Hello": "World!"}
 
-@app.get("/tokenize/{text}")
-def tokenize(text: str):
-    instance = req.create_instance(text)
+class Item(BaseModel):
+    text: str
+
+@app.post("/tokenize")
+def tokenize(item: Item):
+    instance = req.create_instance(item.text)
     prediction = req.send_request([instance])
 
     return {
+            "text": item.text,
             "prediction": prediction,
             }
