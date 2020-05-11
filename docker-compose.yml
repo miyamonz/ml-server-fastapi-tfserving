@@ -8,6 +8,8 @@ services:
       - "./fastapi/app/:/app"
     environment:
       - GUNICORN_CMD_ARGS="--reload"
+    depends_on:
+      - "servingtf"
   servingtf:
     build: './servingtf'
     ports:
