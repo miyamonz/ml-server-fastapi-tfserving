@@ -17,15 +17,93 @@ with open(APP_DIR + '/labels.txt') as f:
 def read_root():
     return {"Hello": "World!"}
 
-class Item(BaseModel):
+class PredictionRequest(BaseModel):
+    """
+    textにstringまたはstringの配列を渡してください
+
+    example:
+    ```json
+    {
+        "text": "よろしくおねがいします。"
+    }
+    ```
+    ```json
+    {
+        "text": ["よろしくおねがいします。", "これってこういうことですか"]
+    }
+    ```
+    """
     text: Union[str, List[str]]
 
-@app.post("/tokenize")
-def tokenize(item: Item):
-    if(isinstance(item.text, list)):
-        result = text_to_result_list(item.text)
+class PredictionResult(BaseModel):
+    """
+    BERTによる分類の推論結果
+    """
+    text: str
+    prediction: List[float]
+
+class PredictionResultBody(BaseModel):
+    """
+    PredictionRequestのtextがstringかstringの配列かに応じて、resultもPredictionResultかその配列になる.  
+    PredictionResultの確率の配列に対応するラベル名がlabelsに示される
+
+    example:
+    ```json
+    {
+      "result": [
+        {
+          "text": "よろしくおねがいします。",
+          "prediction": [
+            0.999928951,
+            0.0000227248311,
+            0.0000257293232,
+            0.0000224753567
+          ]
+        },
+        {
+          "text": "これってこういうことですか",
+          "prediction": [
+            0.000137376017,
+            0.000101430735,
+            0.999649286,
+            0.000111882604
+          ]
+        }
+      ],
+      "labels": [
+        "Report",
+        "Request",
+        "Question",
+        "Log code"
+      ]
+    }
+    ```
+    """
+    result: Union[PredictionResult, List[PredictionResult]]
+    labels: List[str]
+
+@app.post("/tokenize", response_model=PredictionResultBody)
+def tokenize(req: PredictionRequest):
+    """
+    request bodyとしてjsonを渡してください  
+    textにstringまたはstringの配列を渡してください
+
+    example:
+    ```json
+    {
+        "text": "よろしくおねがいします。"
+    }
+    ```
+    ```json
+    {
+        "text": ["よろしくおねがいします。", "これってこういうことですか"]
+    }
+    ```
+    """
+    if(isinstance(req.text, list)):
+        result = text_to_result_list(req.text)
     else:
-        result = text_to_result(item.text)
+        result = text_to_result(req.text)
 
     return {
             "result": result,
