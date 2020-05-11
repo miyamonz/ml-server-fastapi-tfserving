@@ -6,6 +6,7 @@ services:
       - "80:80"
     volumes:
       - "./fastapi/app/:/app"
+      - /app/__pycache__/
     environment:
       - GUNICORN_CMD_ARGS="--reload"
     depends_on:
