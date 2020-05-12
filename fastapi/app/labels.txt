@@ -1,4 +1,0 @@
-Report
-Request
-Question
-Log code
