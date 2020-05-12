@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-alpine3.10
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 RUN pip install --upgrade pip && pip install sentencepiece requests
 EXPOSE 80
 COPY ./app /app/app
