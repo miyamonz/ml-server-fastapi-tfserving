@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import sentencepiece as sp
@@ -46,7 +47,8 @@ def create_instance(example):
             }
     return instances
 
-endpoints = "http://servingtf:8501/v1/models/classify_chat_text:predict"
+MY_MODEL_NAME = os.environ["MY_MODEL_NAME"]
+endpoints = f"http://servingtf:8501/v1/models/{MY_MODEL_NAME}:predict"
 headers = {"content-type":"application-json"}
 def send_request(instances):
     data = json.dumps({"instances":instances})

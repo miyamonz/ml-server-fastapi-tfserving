@@ -5,13 +5,15 @@ services:
     ports:
       - "80:80"
     volumes:
-      - "./fastapi/app/:/app"
+      - "./fastapi/app/:/app/app"
       - /app/__pycache__/
+    entrypoint: ['/start-reload.sh']
     environment:
-      - GUNICORN_CMD_ARGS="--reload"
+      - MY_MODEL_NAME=classify_chat_text
     depends_on:
       - "servingtf"
   servingtf:
-    build: './servingtf'
-    ports:
-      - "8501:8501"
+    build:
+      context: './servingtf'
+      args:
+        MY_MODEL_NAME: classify_chat_text
